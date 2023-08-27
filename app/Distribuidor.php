@@ -4,9 +4,10 @@ namespace App;
 
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use DateTimeImmutable;
 
-
-class Distribuidor extends Authenticatable
+class Distribuidor extends Authenticatable implements JWTSubject
 {
     protected $table = 'distribuidores';
     
@@ -17,4 +18,15 @@ class Distribuidor extends Authenticatable
     {
         return $this->hasMany(Tarea::class);
     }
+    
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+    
 }
