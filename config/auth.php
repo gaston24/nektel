@@ -42,10 +42,9 @@ return [
         ],
     
         'api' => [
-            'driver' => 'jwt', // Cambia 'token' a 'jwt'
+            'driver' => 'jwt',
             'provider' => 'distribuidores',
         ],
-        
     ],
     
 

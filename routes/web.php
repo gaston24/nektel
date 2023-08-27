@@ -3,10 +3,7 @@
 use App\Http\Controllers\DistribuidorController;
 use App\Http\Controllers\TareaController;
 use App\Http\Controllers\Auth\DistribuidorLoginController;
-use App\Http\Controllers\Auth\AuthLoginController;
 
-
-// Otras rutas de autenticación aquí
 
 Route::get('/login', [DistribuidorLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [DistribuidorLoginController::class, 'login'])->name('login');
