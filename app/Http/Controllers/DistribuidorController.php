@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Distribuidor; // Agrega esta línea para importar la clase Distribuidor
 
@@ -49,18 +49,17 @@ class DistribuidorController extends Controller
             'login' => 'required',
             'email' => 'required|email',
         ]);
-    
-        // Verificar si se proporcionó una nueva contraseña
-        if ($request->filled('new_password')) {
-            // Validar la contraseña y confirmación
+        
+      
+        if ($request->filled('nueva_contraseña')) {
+          
             $request->validate([
-                'current_password' => 'required',
-                'new_password' => 'required|string|min:8|confirmed',
+                'contraseña_actual' => 'required',
+                'nueva_contraseña' => 'required|string|min:8|confirmed',
             ]);
-            
-            // Verificar la contraseña actual y actualizar la nueva contraseña
-            if (!Hash::check($request->current_password, $distribuidor->password)) {
-                return redirect()->back()->with('error', 'Contraseña actual incorrecta.');
+
+            if (!password_verify($request->contraseña_actual, $distribuidor->password)) {
+                return redirect()->back()->withInput()->withErrors(['contraseña_actual' => 'Contraseña actual incorrecta.']);
             }
             
             
@@ -76,12 +75,19 @@ class DistribuidorController extends Controller
     }
     
 
-    public function destroy(Distribuidor $distribuidor)
+    public function destroy($id)
     {
+        $distribuidor = Distribuidor::findOrFail($id);
 
+        // Eliminar tareas relacionadas con el distribuidor
+        $distribuidor->tareas()->delete();
+
+        // Eliminar el distribuidor
         $distribuidor->delete();
-    
-        return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor eliminado correctamente.');
+
+        return redirect()->route('admin.distribuidores.index')
+            ->with('success', 'Distribuidor y tareas relacionadas eliminados exitosamente');
     }
+
     
 }

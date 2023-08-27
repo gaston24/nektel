@@ -26,7 +26,7 @@ class DistribuidorLoginController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('login', 'password');
     
         if (Auth::guard('web')->attempt($credentials)) {
             // El usuario ha sido autenticado correctamente
@@ -38,4 +38,5 @@ class DistribuidorLoginController extends Controller
             'email' => 'Credenciales incorrectas',
         ]);
     }
+    
 }
