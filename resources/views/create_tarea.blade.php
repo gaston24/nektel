@@ -8,7 +8,7 @@
         @csrf
         <div class="form-group">
             <label for="fecha">Fecha:</label>
-            <input type="date" name="fecha" id="fecha" class="form-control" required>
+            <input type="date" name="fecha" id="fecha" class="form-control" value="{{ date('Y-m-d') }}" required>
         </div>
         <div class="form-group">
             <label for="nombre">Nombre:</label>
@@ -20,11 +20,13 @@
         </div>
         <div class="form-group">
             <label for="latitud">Latitud:</label>
-            <input type="text" name="latitud" id="latitud" class="form-control" required>
+            <input type="text" name="latitud" id="latitud" class="form-control" required
+                inputmode="numeric" pattern="[0-9.°']+" title="Ingrese solo números">
         </div>
         <div class="form-group">
             <label for="longitud">Longitud:</label>
-            <input type="text" name="longitud" id="longitud" class="form-control" required>
+            <input type="text" name="longitud" id="longitud" class="form-control" required
+                inputmode="numeric" pattern="[0-9.°']+" title="Ingrese solo números">
         </div>
         <div class="form-group">
             <label for="mercancia">Mercancia:</label>

@@ -62,7 +62,7 @@ class DistribuidorController extends Controller
                 return redirect()->back()->withInput()->withErrors(['contraseña_actual' => 'Contraseña actual incorrecta.']);
             }
             
-            
+    
             $distribuidor->update([
                 'login' => $request->login,
                 'email' => $request->email,

@@ -20,12 +20,13 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/distribuidores/{distribuidor}', [DistribuidorController::class, 'update'])->name('distribuidores.update');
     Route::delete('/distribuidores/{distribuidor}', [DistribuidorController::class, 'destroy'])->name('distribuidores.destroy');
     Route::post('/distribuidores', [DistribuidorController::class, 'store'])->name('distribuidores.store');
-
+    
     // RUTAS DE TAREAS
     Route::get('/admin/tareas', [TareaController::class, 'adminIndex'])->name('admin.tareas.index');
     Route::get('/tareas/create', [TareaController::class, 'create'])->name('tareas.create');
-    Route::get('/tareas/{distribuidor}/edit', [TareaController::class, 'edit'])->name('tareas.edit');
-    Route::delete('/tareas/{distribuidor}', [DistribuidorController::class, 'destroy'])->name('tareas.destroy');
+    Route::get('/tareas/{tarea}/edit', [TareaController::class, 'edit'])->name('tareas.edit');
+    Route::put('/tareas/{tareas}', [TareaController::class, 'update'])->name('tareas.update');
+    Route::delete('/tareas/{tarea}', [TareaController::class, 'destroy'])->name('tareas.destroy');
     Route::post('/tareas', [TareaController::class, 'store'])->name('tareas.store');
 });
 

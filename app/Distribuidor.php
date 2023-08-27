@@ -5,7 +5,7 @@ namespace App;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use DateTimeImmutable;
+
 
 class Distribuidor extends Authenticatable implements JWTSubject
 {
