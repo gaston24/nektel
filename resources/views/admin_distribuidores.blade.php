@@ -42,5 +42,7 @@
     </table>
 
     <a href="{{ route('distribuidores.create') }}" class="btn btn-success">Agregar Distribuidor</a>
+
+    <a href="{{ route('home') }}" class="btn btn-secondary">Ir a Home</a>
 </div>
 @endsection

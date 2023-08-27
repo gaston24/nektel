@@ -58,6 +58,8 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a href="{{ route('admin.distribuidores.index') }}" class="btn btn-danger">Cancelar</a>
+
     </form>
 </div>
 @endsection
