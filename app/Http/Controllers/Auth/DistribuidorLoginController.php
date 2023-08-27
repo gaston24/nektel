@@ -39,4 +39,12 @@ class DistribuidorLoginController extends Controller
         ]);
     }
     
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout(); // Cerrar sesión
+
+        // Redirigir al usuario a la página de inicio de sesión
+        return redirect()->route('login');
+    }
+    
 }

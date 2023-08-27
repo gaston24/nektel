@@ -9,6 +9,7 @@ use DateTimeImmutable;
 class Distribuidor extends Authenticatable implements JWTSubject
 {
     protected $table = 'distribuidores';
+    public $rememberTokenName = false;
     
     protected $fillable = ['login', 'email', 'password'];
 
