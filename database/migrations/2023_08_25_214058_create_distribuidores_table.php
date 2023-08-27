@@ -9,7 +9,7 @@ class CreateDistribuidoresTable extends Migration
     public function up()
     {
         Schema::create('distribuidores', function (Blueprint $table) {
-            $table->increments('id'); // Columna de clave primaria autoincremental
+            $table->increments('id'); 
             $table->string('login');
             $table->string('email');
             $table->string('password');

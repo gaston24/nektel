@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use App\Distribuidor; // Agrega esta línea para importar la clase Distribuidor
+use App\Distribuidor; 
 
 class DistribuidorController extends Controller
 {
     public function adminIndex()
     {
-        $distribuidores = Distribuidor::all(); // Utiliza el espacio de nombres completo
+        $distribuidores = Distribuidor::all(); 
         return view('admin_distribuidores', compact('distribuidores'));
     }
 
@@ -20,7 +20,7 @@ class DistribuidorController extends Controller
     
     public function store(Request $request)
     {
-        // Validación de datos
+   
         $data = $request->validate([
             'login' => 'required',
             'email' => 'required|email',
@@ -30,7 +30,7 @@ class DistribuidorController extends Controller
 
         $data['password'] = bcrypt($data['password']);
         
-        // Crear el distribuidor
+
         Distribuidor::create($data);
     
         return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor creado correctamente.');
@@ -44,7 +44,7 @@ class DistribuidorController extends Controller
 
     public function update(Request $request, Distribuidor $distribuidor)
     {
-        // Validación de los campos de nombre y email
+    
         $request->validate([
             'login' => 'required',
             'email' => 'required|email',
@@ -79,10 +79,10 @@ class DistribuidorController extends Controller
     {
         $distribuidor = Distribuidor::findOrFail($id);
 
-        // Eliminar tareas relacionadas con el distribuidor
+
         $distribuidor->tareas()->delete();
 
-        // Eliminar el distribuidor
+
         $distribuidor->delete();
 
         return redirect()->route('admin.distribuidores.index')

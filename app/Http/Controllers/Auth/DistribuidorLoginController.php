@@ -12,7 +12,7 @@ class DistribuidorLoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/dashboard'; // Cambia a la ruta que desees después del login
+    protected $redirectTo = '/dashboard'; 
 
     public function __construct()
     {
@@ -21,7 +21,7 @@ class DistribuidorLoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('auth.login'); // Crea la vista "auth/login.blade.php"
+        return view('auth.login'); 
     }
 
     public function login(Request $request)
@@ -29,11 +29,11 @@ class DistribuidorLoginController extends Controller
         $credentials = $request->only('login', 'password');
     
         if (Auth::guard('web')->attempt($credentials)) {
-            // El usuario ha sido autenticado correctamente
-            return redirect()->intended('/home'); // Cambia '/dashboard' por la ruta a la que deseas redireccionar al usuario autenticado
+       
+            return redirect()->intended('/home'); 
         }
     
-        // Si las credenciales no son válidas, muestra un mensaje de error y redirige de vuelta al formulario de inicio de sesión
+
         return back()->withErrors([
             'email' => 'Credenciales incorrectas',
         ]);
