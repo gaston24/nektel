@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use App\Models\Distribuidor; // Asegúrate de importar el modelo Distribuidor
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Auth;
-use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Http\Request; // Asegúrate de importar Request también
+use Illuminate\Support\Facades\Auth; // Agrega esta importación
+
 
 class DistribuidorLoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/';
-
+    protected $redirectTo = '/dashboard'; // Cambia a la ruta que desees después del login
 
     public function __construct()
     {
@@ -30,31 +26,16 @@ class DistribuidorLoginController extends Controller
 
     public function login(Request $request)
     {
-        
         $credentials = $request->only('email', 'password');
-
-        if (! Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Credenciales inválidas'], 401);
+    
+        if (Auth::guard('web')->attempt($credentials)) {
+            // El usuario ha sido autenticado correctamente
+            return redirect()->intended('/home'); // Cambia '/dashboard' por la ruta a la que deseas redireccionar al usuario autenticado
         }
-
-        $distribuidor = Auth::user(); // Obtén el distribuidor autenticado
-
-        try {
-            $token = JWTAuth::fromUser($distribuidor); // Genera el token JWT
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'No se pudo crear el token'], 500);
-        }
-
-        return response()->json([
-            'token' => $token,
+    
+        // Si las credenciales no son válidas, muestra un mensaje de error y redirige de vuelta al formulario de inicio de sesión
+        return back()->withErrors([
+            'email' => 'Credenciales incorrectas',
         ]);
     }
-
-
-    public function logout()
-    {
-        auth()->logout();
-        return response()->json(['message' => 'Cierre de sesión exitoso']);
-    }
-
 }

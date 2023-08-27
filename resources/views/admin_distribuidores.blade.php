@@ -28,7 +28,7 @@
                 <td>
                     <a href="{{ route('distribuidores.edit', $distribuidor) }}" class="btn btn-sm btn-primary">Editar</a>
 
-                    <form action="{{ route ('distribuidores.destroy', $distribuidor) }}" method="DELETE" style="display: inline-block;">
+                    <form action="{{ route ('distribuidores/destroy', $distribuidor) }}" method="DELETE" style="display: inline-block;">
                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</button>
                         @csrf
                         @method('DELETE')

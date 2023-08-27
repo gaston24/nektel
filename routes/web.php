@@ -5,12 +5,13 @@ use App\Http\Controllers\TareaController;
 use App\Http\Controllers\Auth\DistribuidorLoginController;
 
 
+
 Route::get('/login', [DistribuidorLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [DistribuidorLoginController::class, 'login'])->name('login');
 Route::post('/logout', [DistribuidorLoginController::class, 'logout'])->name('logout');
 
 
-Route::middleware(['jwt.auth'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     
     // RUTAS DE DISTRIBUIDORES
     // Route::resource('distribuidores', DistribuidorController::class);
@@ -22,9 +23,9 @@ Route::middleware(['jwt.auth'])->group(function () {
     
 
     Route::put('/distribuidores/{distribuidor}', [DistribuidorController::class, 'update'])->name('distribuidores.update');
+    Route::delete('/distribuidores/destroy/{distribuidor}', [DistribuidorController::class, 'destroy']);
     
     Route::post('/distribuidores', [DistribuidorController::class, 'store'])->name('distribuidores.store');
-    Route::delete('/distribuidores/{distribuidor}', [DistribuidorController::class, 'destroy'])->name('distribuidores.destroy');
     
 
     // RUTAS DE TAREAS 
