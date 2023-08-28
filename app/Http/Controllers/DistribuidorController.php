@@ -1,15 +1,23 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Http\Request;
-use App\Distribuidor; 
+use App\Services\DistribuidorService;
+use App\Distribuidor;
 
 class DistribuidorController extends Controller
 {
+    protected $distribuidorService;
+
+    public function __construct(DistribuidorService $distribuidorService)
+    {
+        $this->distribuidorService = $distribuidorService;
+    }
+
     public function adminIndex()
     {
-        $distribuidores = Distribuidor::all(); 
+        $distribuidores = $this->distribuidorService->getAllDistribuidores();
         return view('admin_distribuidores', compact('distribuidores'));
     }
 
@@ -29,9 +37,8 @@ class DistribuidorController extends Controller
         ]);
 
         $data['password'] = bcrypt($data['password']);
-        
 
-        Distribuidor::create($data);
+        $this->distribuidorService->createDistribuidor($data);
     
         return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor creado correctamente.');
     } 
@@ -61,13 +68,8 @@ class DistribuidorController extends Controller
             if (!password_verify($request->contraseña_actual, $distribuidor->password)) {
                 return redirect()->back()->withInput()->withErrors(['contraseña_actual' => 'Contraseña actual incorrecta.']);
             }
-            
-    
-            $distribuidor->update([
-                'login' => $request->login,
-                'email' => $request->email,
-                'password' => bcrypt($request->new_password),
-            ]);
+
+            $this->distribuidorService->updateDistribuidor($distribuidor, $request->all());
 
         }
     
@@ -77,14 +79,8 @@ class DistribuidorController extends Controller
 
     public function destroy($id)
     {
-        $distribuidor = Distribuidor::findOrFail($id);
-
-
-        $distribuidor->tareas()->delete();
-
-
-        $distribuidor->delete();
-
+        $this->distribuidorService->deleteDistribuidor($id);
+    
         return redirect()->route('admin.distribuidores.index')
             ->with('success', 'Distribuidor y tareas relacionadas eliminados exitosamente');
     }
