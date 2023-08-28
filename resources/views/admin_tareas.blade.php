@@ -3,8 +3,6 @@
 @section('content')
 <div class="container">
     <h1>Administrar Tareas</h1>
-    
-    <a href="{{ route('tareas.create') }}" class="btn btn-success">Agregar Tarea</a>
 
     @if (session('success'))
         <div class="alert alert-success mt-3">
@@ -50,5 +48,9 @@
             @endforeach
         </tbody>
     </table>
+
+    <a href="{{ route('tareas.create') }}" class="btn btn-success">Agregar Tarea</a>
+    <a href="{{ route('home') }}" class="btn btn-secondary">Ir a Home</a>
+    
 </div>
 @endsection

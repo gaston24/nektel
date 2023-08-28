@@ -3,13 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Distribuidor; // Agrega esta línea para importar la clase Distribuidor
+use App\Services\DistribuidorService;
+use App\Distribuidor;
+
 
 class DistribuidorController extends Controller
 {
-    public function adminIndex()
+    protected $distribuidorService;
+
+    public function __construct(DistribuidorService $distribuidorService)
     {
-        $distribuidores = Distribuidor::all(); // Utiliza el espacio de nombres completo
+        $this->distribuidorService = $distribuidorService;
+    }
+
+    public function adminIndex(Request $request)
+    {
+        $distribuidores = $this->distribuidorService->getAllDistribuidores();
+
+        if ($request->wantsJson()) {
+            return response()->json(['data' => $distribuidores]);
+        }
+
         return view('admin_distribuidores', compact('distribuidores'));
     }
 
@@ -20,7 +34,7 @@ class DistribuidorController extends Controller
     
     public function store(Request $request)
     {
-        // Validación de datos
+   
         $data = $request->validate([
             'login' => 'required',
             'email' => 'required|email',
@@ -29,9 +43,12 @@ class DistribuidorController extends Controller
         ]);
 
         $data['password'] = bcrypt($data['password']);
-        
-        // Crear el distribuidor
-        Distribuidor::create($data);
+
+        $this->distribuidorService->createDistribuidor($data);
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Distribuidor creado correctamente.']);
+        }
     
         return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor creado correctamente.');
     } 
@@ -44,44 +61,54 @@ class DistribuidorController extends Controller
 
     public function update(Request $request, Distribuidor $distribuidor)
     {
-        // Validación de los campos de nombre y email
+    
         $request->validate([
             'login' => 'required',
             'email' => 'required|email',
         ]);
-    
-        // Verificar si se proporcionó una nueva contraseña
-        if ($request->filled('new_password')) {
-            // Validar la contraseña y confirmación
+        
+      
+        if ($request->filled('nueva_contraseña')) {
+          
             $request->validate([
-                'current_password' => 'required',
-                'new_password' => 'required|string|min:8|confirmed',
-            ]);
-            
-            // Verificar la contraseña actual y actualizar la nueva contraseña
-            if (!Hash::check($request->current_password, $distribuidor->password)) {
-                return redirect()->back()->with('error', 'Contraseña actual incorrecta.');
-            }
-            
-            
-            $distribuidor->update([
-                'login' => $request->login,
-                'email' => $request->email,
-                'password' => bcrypt($request->new_password),
+                'contraseña_actual' => 'required',
+                'nueva_contraseña' => 'required|string|min:8|confirmed',
             ]);
 
+            if (!password_verify($request->contraseña_actual, $distribuidor->password)) {
+
+                if ($request->wantsJson()) {
+                    return response()->json(['message' => 'Contraseña actual incorrecta.']);
+                }
+
+                return redirect()->back()->withInput()->withErrors(['contraseña_actual' => 'Contraseña actual incorrecta.']);
+
+            }
+
+
         }
-    
+
+        $this->distribuidorService->updateDistribuidor($distribuidor, $request->all());
+        
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Distribuidor modificado correctamente.']);
+        }
+        
         return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor actualizado correctamente.');
     }
     
 
-    public function destroy(Distribuidor $distribuidor)
+    public function destroy(Request $request, $id)
     {
+        $this->distribuidorService->deleteDistribuidor($id);
 
-        $distribuidor->delete();
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Distribuidor eliminado correctamente.']);
+        }
     
-        return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor eliminado correctamente.');
+        return redirect()->route('admin.distribuidores.index')
+            ->with('success', 'Distribuidor y tareas relacionadas eliminados exitosamente');
     }
+
     
 }

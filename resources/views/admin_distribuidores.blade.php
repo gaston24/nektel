@@ -28,10 +28,11 @@
                 <td>
                     <a href="{{ route('distribuidores.edit', $distribuidor) }}" class="btn btn-sm btn-primary">Editar</a>
 
-                    <form action="{{ route ('distribuidores.destroy', $distribuidor) }}" method="DELETE" style="display: inline-block;">
+                    <form action="{{ route ('distribuidores.destroy', $distribuidor) }}" method="POST" style="display: inline-block;">
                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</button>
-                        @csrf
                         @method('DELETE')
+                        @csrf
+                 
                     </form>
 
                 </td>
@@ -41,5 +42,7 @@
     </table>
 
     <a href="{{ route('distribuidores.create') }}" class="btn btn-success">Agregar Distribuidor</a>
+
+    <a href="{{ route('home') }}" class="btn btn-secondary">Ir a Home</a>
 </div>
 @endsection

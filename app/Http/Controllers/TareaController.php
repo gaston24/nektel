@@ -3,31 +3,46 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Tarea; // Agrega esta línea para importar la clase Distribuidor
-use App\Distribuidor; 
+use App\Services\TareaService;
+use App\Services\DistribuidorService;
+use App\Tarea;
 
 class TareaController extends Controller
 {
-    public function adminIndex()
+
+    protected $tareaService;
+    protected $distribuidorService;
+
+    public function __construct(TareaService $tareaService, DistribuidorService $distribuidorService)
     {
-        // Obtener las tareas del distribuidor actual
+        $this->tareaService = $tareaService;
+        $this->distribuidorService = $distribuidorService;
+
+    }
+
+    public function adminIndex(Request $request)
+    {
+   
         $distribuidorId = auth()->user()->id;
-        $tareas = Tarea::where('distribuidor_id', $distribuidorId)->get();
+        $tareas = $this->tareaService->getTareasByDistribuidorId($distribuidorId);
+
+        if ($request->wantsJson()) {
+            return response()->json(['data' => $tareas]);
+        }
 
         return view('admin_tareas', compact('tareas'));
     }
        
-        
     public function create()
     {
-        $distribuidores = Distribuidor::all(); // Obtén la lista de distribuidores
+        $distribuidores = $this->distribuidorService->getAllDistribuidores();
         return view('create_tarea', compact('distribuidores'));
     }
     
     
     public function store(Request $request)
     {
-        // Validación de datos
+
         $data = $request->validate([
             'fecha' => 'required|date',
             'nombre' => 'required',
@@ -36,14 +51,71 @@ class TareaController extends Controller
             'longitud' => 'required',
             'mercancia' => 'required',
             'distribuidor_id' => 'required|exists:distribuidores,id',
-            // Agrega más reglas de validación según tus campos
+        
         ]);
 
+ 
+        $this->tareaService->create($data);
 
-        // Crear la tarea
-        Tarea::create($data);
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Tarea creada correctamente.']);
+        }
 
         return redirect()->route('admin.tareas.index')->with('success', 'Tarea creada correctamente.');
+    }
+
+    public function edit(Tarea $tarea)
+    {
+        $distribuidores = $this->distribuidorService->getAllDistribuidores();
+
+        return view('edit_tarea', compact('tarea', 'distribuidores'));
+    }
+
+    public function update(Request $request, $id)
+    {
+
+        try{
+
+            $tarea = $this->tareaService->findById($id);
+
+            $data = $request->validate([
+                'fecha' => 'required|date',
+                'nombre' => 'required',
+                'direccion' => 'required',
+                'latitud' => 'required',
+                'longitud' => 'required',
+                'mercancia' => 'required',
+                'distribuidor_id' => 'required|exists:distribuidores,id',
+            
+            ]);
+    
+            $this->tareaService->update($tarea, $data);
+
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'Tarea actualizada correctamente.']);
+            }
+
+            return redirect()->route('admin.tareas.index')->with('success', 'Tarea actualizada correctamente.');
+
+        }catch(\Exception $e){
+
+            return response()->json(['message' => 'Tarea no encontrada.']);
+
+        }
+
+    }
+
+    public function destroy(Request $request, $id)
+    {
+
+        $this->tareaService->delete($id);
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Tarea eliminadda correctamente.']);
+        }
+    
+        return redirect()->route('admin.tareas.index')
+            ->with('success', 'Tarea eliminadda exitosamente');
     }
 
     
