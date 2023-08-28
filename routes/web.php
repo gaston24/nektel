@@ -8,15 +8,11 @@ use App\Http\Controllers\Auth\DistribuidorLoginController;
 // Rutas de autenticación
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [DistribuidorLoginController::class, 'login'])->name('login');
-    Route::post('/logout', [DistribuidorLoginController::class, 'logout'])->name('logout');
 });
 
+Route::post('/logout', [DistribuidorLoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['guest'])->group(function () {
-    Route::get('/', function () { 
-        return view('auth/login'); 
-    })->name('home');
-});
+Route::middleware(['guest'])->group(function () { Route::get('/', function () { return view('auth/login'); })->name('home'); });
 
 // Rutas protegidas por autenticación
 Route::middleware(['auth'])->group(function () {
@@ -42,6 +38,3 @@ Route::middleware(['auth'])->group(function () {
     });
 
 });
-
-// Ruta de inicio
-Route::get('/home', 'HomeController@index')->name('home');
