@@ -20,11 +20,15 @@ class TareaController extends Controller
 
     }
 
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
    
         $distribuidorId = auth()->user()->id;
         $tareas = $this->tareaService->getTareasByDistribuidorId($distribuidorId);
+
+        if ($request->wantsJson()) {
+            return response()->json(['data' => $tareas]);
+        }
 
         return view('admin_tareas', compact('tareas'));
     }
@@ -53,6 +57,10 @@ class TareaController extends Controller
  
         $this->tareaService->create($data);
 
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Tarea creada correctamente.']);
+        }
+
         return redirect()->route('admin.tareas.index')->with('success', 'Tarea creada correctamente.');
     }
 
@@ -65,33 +73,47 @@ class TareaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $tarea = $this->tareaService->findById($id);
 
-        if (!$tarea) {
-            return redirect()->route('admin.tareas.index')->with('error', 'Tarea no encontrada.');
+        try{
+
+            $tarea = $this->tareaService->findById($id);
+
+            $data = $request->validate([
+                'fecha' => 'required|date',
+                'nombre' => 'required',
+                'direccion' => 'required',
+                'latitud' => 'required',
+                'longitud' => 'required',
+                'mercancia' => 'required',
+                'distribuidor_id' => 'required|exists:distribuidores,id',
+            
+            ]);
+    
+            $this->tareaService->update($tarea, $data);
+
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'Tarea actualizada correctamente.']);
+            }
+
+            return redirect()->route('admin.tareas.index')->with('success', 'Tarea actualizada correctamente.');
+
+        }catch(\Exception $e){
+
+            return response()->json(['message' => 'Tarea no encontrada.']);
+
         }
-        
-        $data = $request->validate([
-            'fecha' => 'required|date',
-            'nombre' => 'required',
-            'direccion' => 'required',
-            'latitud' => 'required',
-            'longitud' => 'required',
-            'mercancia' => 'required',
-            'distribuidor_id' => 'required|exists:distribuidores,id',
-          
-        ]);
-  
-        $this->tareaService->update($tarea, $data);
 
-        return redirect()->route('admin.tareas.index')->with('success', 'Tarea actualizada correctamente.');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
 
         $this->tareaService->delete($id);
 
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Tarea eliminadda correctamente.']);
+        }
+    
         return redirect()->route('admin.tareas.index')
             ->with('success', 'Tarea eliminadda exitosamente');
     }

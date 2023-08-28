@@ -76,17 +76,23 @@ class DistribuidorController extends Controller
             ]);
 
             if (!password_verify($request->contraseña_actual, $distribuidor->password)) {
+
+                if ($request->wantsJson()) {
+                    return response()->json(['message' => 'Contraseña actual incorrecta.']);
+                }
+
                 return redirect()->back()->withInput()->withErrors(['contraseña_actual' => 'Contraseña actual incorrecta.']);
+
             }
 
 
         }
 
+        $this->distribuidorService->updateDistribuidor($distribuidor, $request->all());
+        
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Distribuidor modificado correctamente.']);
         }
-        
-        $this->distribuidorService->updateDistribuidor($distribuidor, $request->all());
         
         return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor actualizado correctamente.');
     }
