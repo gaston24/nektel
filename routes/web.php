@@ -12,10 +12,17 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::post('/logout', [DistribuidorLoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['guest'])->group(function () { Route::get('/', function () { return view('auth/login'); })->name('home'); });
+Route::middleware(['guest'])->group(function () {
+    Route::get('/', function () { 
+        return view('auth/login'); 
+    })->name('home');
+});
 
 // Rutas protegidas por autenticación
 Route::middleware(['auth'])->group(function () {
+
+    // Ruta de inicio
+    Route::get('/home', 'HomeController@index')->name('home');
 
     // RUTAS DE DISTRIBUIDORES
     Route::prefix('distribuidores')->group(function () {
