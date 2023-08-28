@@ -69,10 +69,11 @@ class DistribuidorController extends Controller
                 return redirect()->back()->withInput()->withErrors(['contraseña_actual' => 'Contraseña actual incorrecta.']);
             }
 
-            $this->distribuidorService->updateDistribuidor($distribuidor, $request->all());
 
         }
-    
+        
+        $this->distribuidorService->updateDistribuidor($distribuidor, $request->all());
+        
         return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor actualizado correctamente.');
     }
     
