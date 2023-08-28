@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\DistribuidorService;
 use App\Distribuidor;
 
+
 class DistribuidorController extends Controller
 {
     protected $distribuidorService;
@@ -15,9 +16,14 @@ class DistribuidorController extends Controller
         $this->distribuidorService = $distribuidorService;
     }
 
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
         $distribuidores = $this->distribuidorService->getAllDistribuidores();
+
+        if ($request->wantsJson()) {
+            return response()->json(['data' => $distribuidores]);
+        }
+
         return view('admin_distribuidores', compact('distribuidores'));
     }
 
@@ -39,6 +45,10 @@ class DistribuidorController extends Controller
         $data['password'] = bcrypt($data['password']);
 
         $this->distribuidorService->createDistribuidor($data);
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Distribuidor creado correctamente.']);
+        }
     
         return redirect()->route('admin.distribuidores.index')->with('success', 'Distribuidor creado correctamente.');
     } 
@@ -71,6 +81,10 @@ class DistribuidorController extends Controller
 
 
         }
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Distribuidor modificado correctamente.']);
+        }
         
         $this->distribuidorService->updateDistribuidor($distribuidor, $request->all());
         
@@ -78,9 +92,13 @@ class DistribuidorController extends Controller
     }
     
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $this->distribuidorService->deleteDistribuidor($id);
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Distribuidor eliminado correctamente.']);
+        }
     
         return redirect()->route('admin.distribuidores.index')
             ->with('success', 'Distribuidor y tareas relacionadas eliminados exitosamente');
